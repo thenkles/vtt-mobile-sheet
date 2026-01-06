@@ -15,7 +15,7 @@ export default function CharacterList(props: CharacterListProps) {
 
     return (<Stack>
         {characters.map(character => {
-            return (<Link key={character._id} to={`/character/${character._id}`}>
+            return (<Link key={character._id} to={`/character/${character._id}/stats`}>
             <Stack gap="0">
                 <Image
                     src={`${configuration.foundryUrl}/${character.img}`}

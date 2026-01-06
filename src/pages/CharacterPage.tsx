@@ -1,9 +1,10 @@
-import { useParams } from "react-router-dom";
-import CharacterSheet from "../components/CharacterSheet";
-import { Drawer, Flex, Grid, GridItem, IconButton, Tabs } from "@chakra-ui/react";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
+import CharacterSheet from "../components/CharacterStats";
+import { Drawer, Flex, Grid, GridItem, IconButton, Link, Spinner, Tabs } from "@chakra-ui/react";
 import { GiCharacter } from "react-icons/gi";
 import { useState } from "react";
 import CharacterList from "@/components/CharacterList";
+import { useCharacter, useIsWorldLoaded } from "@/repositories/FoundryHooks";
 
 
 function Contents(characterId?: string) {
@@ -17,6 +18,26 @@ function Contents(characterId?: string) {
 export default function CharacterPage() {
     const { characterId } = useParams();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const isWorldLoaded = useIsWorldLoaded();
+    const character = useCharacter(characterId);
+
+    const navigate = useNavigate();
+
+    const onTabChanged = (tab: string) => {
+        navigate(tab);
+    }
+
+    const renderName = () => {
+        if (!isWorldLoaded) {
+            return (<><Spinner /> Loading...</>)
+        }
+
+        if (!character) {
+            return 'Error';
+        }
+
+        return character?.name;
+    };
 
     return (<Drawer.Root open={isMenuOpen} onOpenChange={(e) => setIsMenuOpen(e.open)} placement="start">
         <Drawer.Backdrop />
@@ -37,35 +58,24 @@ export default function CharacterPage() {
                 </Drawer.CloseTrigger>
             </Drawer.Content>
         </Drawer.Positioner>
-        {/* <header>
-            <Flex as="nav" align="center" justify="space-between" wrap="wrap"
-                gap={{ base: 8, lg: 16 }} px={{ base: 6, lg: 12 }} py={3}
-                maxW={{ base: "full", xl: "1440px" }} mx="auto" position="static">
+
+        <Grid templateRows="max-content auto max-content" height="100vh">
+            <GridItem>
                 <IconButton variant="ghost" onClick={() => setIsMenuOpen(true)}>
                     <GiCharacter />
                 </IconButton>
-            </Flex>
 
-
-        </header>
-        <main className="container">
-            {Contents(characterId)}
-        </main> */}
-        <Grid templateRows="max-content auto max-content" height="100vh">
-            <GridItem>
-            <IconButton variant="ghost" onClick={() => setIsMenuOpen(true)}>
-                    <GiCharacter />
-                </IconButton>
+                {renderName()}
             </GridItem>
             <GridItem>
-                Contents
+                <Outlet />
             </GridItem>
             <GridItem>
-                <Tabs.Root variant="enclosed" maxW="md" fitted defaultValue={"tab-1"}>
+                <Tabs.Root onValueChange={(e) => onTabChanged(e.value)} variant="enclosed" maxW="md" fitted defaultValue={"tab-1"}>
                     <Tabs.List>
-                        <Tabs.Trigger value="tab-1">Tab 1</Tabs.Trigger>
-                        <Tabs.Trigger value="tab-2">Tab 2</Tabs.Trigger>
-                        <Tabs.Trigger value="tab-3">Tab 3</Tabs.Trigger>
+                        <Tabs.Trigger value="stats">Stats</Tabs.Trigger>
+                        <Tabs.Trigger value="items">Items</Tabs.Trigger>
+                        <Tabs.Trigger value="feats">Feats</Tabs.Trigger>
                     </Tabs.List>
                 </Tabs.Root>
             </GridItem>

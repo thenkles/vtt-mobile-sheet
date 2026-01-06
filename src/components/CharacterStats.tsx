@@ -3,8 +3,8 @@ import { useCharacter } from "@/repositories/FoundryHooks";
 import type { Character, DndAbilities, DndAbility } from "@/repositories/FoundryModels";
 import { Stack, Image, Progress, Tabs, Grid, GridItem, Container } from "@chakra-ui/react";
 
-interface ICharacterSheetProps {
-    characterId: string
+interface CharacterStatsProps {
+    characterId?: string
 }
 
 function RenderAbility(label: string, ability: DndAbility, proficiencyBonus: number) {
@@ -28,7 +28,14 @@ function RenderAbilities(character: Character) {
     </>);
 }
 
-function RenderStats(character: Character) {
+
+export default function CharacterStats(props: CharacterStatsProps) {
+    const character = useCharacter(props.characterId);
+
+    if (!character) {
+        return 'Character not found';
+    }
+
     return (
         <Stack gap="0">
             <Image
@@ -54,30 +61,4 @@ function RenderStats(character: Character) {
             <div>HP: {character.system.attributes.hp.value} / {character.system.attributes.hp.max}</div>
             {RenderAbilities(character)}
         </Stack>);
-}
-
-export default function CharacterSheet(props: ICharacterSheetProps) {
-    const character = useCharacter(props.characterId);
-
-    if (!character) {
-        return 'Character not found';
-    }
-
-    return (
-        <Container minHeight="100vh">
-        <Grid templateRows="auto max-content" minHeight="100vh">
-            <GridItem>
-Contents
-            </GridItem>
-            <GridItem>
-                <Tabs.Root variant="enclosed" maxW="md" fitted defaultValue={"tab-1"}>
-                    <Tabs.List>
-                        <Tabs.Trigger value="tab-1">Tab 1</Tabs.Trigger>
-                        <Tabs.Trigger value="tab-2">Tab 2</Tabs.Trigger>
-                        <Tabs.Trigger value="tab-3">Tab 3</Tabs.Trigger>
-                    </Tabs.List>
-                </Tabs.Root>
-            </GridItem>
-        </Grid>
-        </Container>);
 }

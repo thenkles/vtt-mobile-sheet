@@ -6,6 +6,18 @@ export interface World {
 
 }
 
+export interface ItemDndSystem {
+    description: string;
+}
+
+export interface Item {
+    _id: string;
+    type: string;
+    name: string;
+    img: string;
+    system: ItemDndSystem;
+}
+
 export interface DndAbilityBonuses {
     check: string;
     save: string;
@@ -101,4 +113,5 @@ export interface Character {
     name: string;
     img: string;
     system: Dnd5eSystem;
+    items: Item[];
 }

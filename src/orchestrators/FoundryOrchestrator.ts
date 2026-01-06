@@ -7,10 +7,12 @@ export default class FoundryOrchestrator {
     client: FoundryClient;
     allCharacters: Character[];
     events: FoundryEvents;
+    isWorldLoaded: boolean;
 
     constructor() {
         this.events = new FoundryEvents();
         this.allCharacters = [];
+        this.isWorldLoaded = false;
 
         this.client = new FoundryClient();
 
@@ -20,7 +22,7 @@ export default class FoundryOrchestrator {
         this.client.requestWorld();
     }
 
-    getCharacter(characterId: string): Character | null {
+    getCharacter(characterId?: string): Character | null {
 
         const foundCharacters = this.allCharacters.filter(character => character._id === characterId);
 
@@ -33,6 +35,8 @@ export default class FoundryOrchestrator {
 
     onCharactersRetrieved(characters: Character[]) {
         console.log(characters);
+        this.isWorldLoaded = true;
+        this.events.onWorldLoaded.dispatch();
         this.allCharacters = characters;
 
         this.allCharacters.forEach(character => this.events.onCharacterUpdated.dispatch(character));

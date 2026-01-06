@@ -5,6 +5,9 @@ import CharacterPage from "./pages/CharacterPage";
 import { AppContext } from "./AppContext";
 import { useContext, useEffect } from "react";
 import { toaster } from "@/components/ui/toaster"
+import CharacterStatsTab from "./pages/CharacterStatsTab";
+import CharacterItemsTab from "./pages/CharacterItemsTab";
+import CharacterFeatsTab from "./pages/CharacterFeatsTab";
 
 
 function App() {
@@ -31,7 +34,12 @@ function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<span>Home</span>} />
-        <Route path="character/:characterId" element={<CharacterPage />} />
+        <Route path="character/:characterId" element={<CharacterPage />}>
+          <Route path="stats" element={<CharacterStatsTab />} />
+          <Route path="items" element={<CharacterItemsTab />} />
+          <Route path="feats" element={<CharacterFeatsTab />} />
+          <Route path="*" element={<div>:(</div>} />
+        </Route>
         <Route path="*" element={<div>404 error</div>} />
       </Route>
     </Routes>
